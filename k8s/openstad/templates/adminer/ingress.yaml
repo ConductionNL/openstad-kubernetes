@@ -4,7 +4,7 @@
 {{ $servicePort := .Values.adminer.service.httpPort }}
 {{ $tls := .Values.adminer.ingress.tls }}
 
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 
 metadata:
@@ -32,15 +32,23 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: {{ $serviceName }}
-              servicePort: {{ $servicePort }}
+              service:
+                name: {{ $serviceName }}
+                port: 
+                    number: {{ $servicePort }}
+            pathType: ImplementationSpecific
+
 {{- end }}
     - host: {{ template "openstad.adminer.url" . }}
       http:
         paths:
           - backend:
-              serviceName: {{ $serviceName }}
-              servicePort: {{ $servicePort }}
+              service:
+                name: {{ $serviceName }}
+                port: 
+                    number: {{ $servicePort }}
+            pathType: ImplementationSpecific
+
               
   tls:
     - secretName: {{ .Values.adminer.ingress.tls.secretName }}
